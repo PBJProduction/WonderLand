@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent (typeof(BoxCollider))]
+[RequireComponent (typeof(BoxCollider2D))]
 public class PlayerPhysics : MonoBehaviour {
   public LayerMask collisionMask;
   [HideInInspector]
@@ -9,7 +9,7 @@ public class PlayerPhysics : MonoBehaviour {
   [HideInInspector]
   public bool hasHitWall;
 
-  private BoxCollider collider;
+  private BoxCollider2D collider;
   private Vector3 size;
   private Vector3 center;
   private Ray ray;
@@ -18,16 +18,19 @@ public class PlayerPhysics : MonoBehaviour {
   private const int NUM_RAYCAST = 10;
   
   void Start () {
-    collider = GetComponent<BoxCollider> ();
-    size = collider.size;
-    center = collider.center;
+    collider = GetComponent<BoxCollider2D> ();
+
+    size.x = collider.size.x * transform.localScale.x;
+    size.y = collider.size.y * transform.localScale.y;
+    center.x = collider.center.x * transform.localScale.x;
+    center.y = collider.center.y * transform.localScale.y;
   }
   
   public void move (Vector2 moveAmount) {
     Vector2 position = transform.position;
     float deltaY = computeDeltaY (moveAmount.y, position);
     float deltaX = computeDeltaX (moveAmount.x, position);
-    transform.Translate (new Vector2 (deltaX, deltaY));
+    transform.Translate (new Vector2 (deltaX, deltaY), Space.World);
   }
 
   private float computeDeltaX (float deltaX, Vector2 position) {
